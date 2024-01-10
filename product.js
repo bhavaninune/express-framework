@@ -1,48 +1,31 @@
-const fs = require('fs');
-const path = require('path');
+const Product = require('../models/product');
 
-const p = path.join(
-  path.dirname(process.mainModule.filename),
-  'data',
-  'products.json'
-);
-
-const getProductsFromFile = cb => {
-  fs.readFile(p, (err, fileContent) => {
-    if (err) {
-      cb([]);
-    } else {
-      cb(JSON.parse(fileContent));
-    }
+exports.getAddProduct = (req, res, next) => {
+  res.render('admin/add-product', {
+    pageTitle: 'Add Product',
+    path: '/admin/add-product',
+    formsCSS: true,
+    productCSS: true,
+    activeAddProduct: true
   });
 };
 
-module.exports = class Product {
-  constructor(title, imageUrl, description, price) {
-    this.title = title;
-    this.imageUrl = imageUrl;
-    this.description = description;
-    this.price = price;
-  }
+exports.postAddProduct = (req, res, next) => {
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+  const product = new Product(title, imageUrl, description, price);
+  product.save();
+  res.redirect('/');
+};
 
-  save() {
-    this.id = Math.random().toString();
-    getProductsFromFile(products => {
-      products.push(this);
-      fs.writeFile(p, JSON.stringify(products), err => {
-        console.log(err);
-      });
+exports.getProducts = (req, res, next) => {
+  Product.fetchAll(products => {
+    res.render('admin/products', {
+      prods: products,
+      pageTitle: 'Admin Products',
+      path: '/admin/products'
     });
-  }
-
-  static fetchAll(cb) {
-    getProductsFromFile(cb);
-  }
-
-  static findById(id, cb) {
-    getProductsFromFile(products => {
-      const product = products.find(p => p.id === id);
-      cb(product);
-    });
-  }
+  });
 };
