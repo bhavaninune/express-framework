@@ -1,14 +1,13 @@
-const path = require('path');
-const express = require('express');
-const productscontroler = require('../controllers/products');
+const path=require('path');
+const express=require('express');
+const productsController=require('../controllers/products');
+const router=express.Router();
+const products=[];
 
-const router = express.Router();
-
-// /admin/add-product => GET
-router.get('/add-product', productscontroler.addProducts);
-
-// /admin/add-product => POST
-router.post('/add-product', productscontroler.postAddProducts);
-
-// Export the router instead of a property named "routes"
-module.exports = router;
+// /admin/add-product
+router.get('/add-product',productsController.getAddProduct);
+ // /admin/add-product
+ router.post('/add-product',productsController.postAddProduct);
+ exports.routes=router;
+ 
+ 

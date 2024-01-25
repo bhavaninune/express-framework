@@ -1,30 +1,21 @@
 const path=require('path');
-const express = require('express');
-const hbs = require('hbs');
-const bodyParser = require('body-parser');
+const express=require('express');
+const bodyparser=require('body-parser');
+const app=express();
+const adminRoutes=require('./routes/admin');
+const shopRoutes=require('./routes/shop');
+app.use(bodyparser.urlencoded({extended:false}));
+app.use(express.static(path.join(__dirname,'public')));
 
-const app = express();
-// my own files
-const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
-
-
-//const app = express();
-
-app.use(bodyParser.urlencoded({extended:false}));
-app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'views'));
-
-
-// creating the page using routes files
 app.use('/admin',adminRoutes);
 app.use(shopRoutes);
 
+//for 404 changes
 
 app.use((req,res,next) => {
-    res.status(404).sendFile(path.join(__dirname,'views','404.html'));
+res.status(404).sendFile(path.join(__dirname,'views','404.html'));
 });
 
-
-// Creating server and port
-app.listen(3000);
+app.listen(3000, () => {
+    console.log('Server is listening on port 3000');
+});
